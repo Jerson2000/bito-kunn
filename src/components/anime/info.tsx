@@ -14,7 +14,7 @@ const AnimeInfo = (data: { id: string, episode: string }) => {
     const [animeInfo, setAnimeInfo] = useState<any>(null);
     const [server, setServer] = useState<any>(null);
     const [currentServer, setCurrentServer] = useState<string | null>(null);
-    const [stream,setStream] = useState<any>(null);
+    const [stream, setStream] = useState<any>(null);
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const hls = new Hls();
@@ -27,12 +27,7 @@ const AnimeInfo = (data: { id: string, episode: string }) => {
             setServer(data);
             setCurrentServer(data[0].url)
         })
-        gogoanime.fetchEpisodeSources("dandadan-episode-1").
-        then(data=>{
-            // setStream(data);
-            console.log(data);
-        })
-    
+
         // if (Hls.isSupported()) {
         //     hls.loadSource(data.);
         //     if (videoRef.current) {
@@ -55,28 +50,50 @@ const AnimeInfo = (data: { id: string, episode: string }) => {
     return (
 
         <div className="container mx-auto my-10">
+
+            <div className="my-10 flex gap-4 max-sm:flex-col items-center justify-center text-center bg-indigo-950 text-white dark:bg-indigo-100 dark:text-indigo-950  px-6 py-3.5 rounded font-[sans-serif]">
+                <p className="text-base">Please use adblock to block the ads coming from the embed video I have yet implemented the proxy because i does not work huhu 🥺😞</p>
+            </div>
+
             {animeInfo &&
                 <h1><span className="text-lg">Now watching 📺</span> <span className="text-2xl underline">{animeInfo.title.toString()}</span>  / Episode {data.episode.toUpperCase()}</h1>
 
             }
 
-            <div className="block">
-                <h1 className="mt-5">Servers</h1>
-                <div className="flex flex-wrap" >
+            <div className="block mt-2">
+                <h1 className="text-md md:text-lg">Description</h1>
+                <p className="text-sm md:text-md text-indigo-950 dark:text-indigo-200">{animeInfo && animeInfo.description}</p>
+                <h1 className="text-md md:text-lg">Genre</h1>
+                <ul className="flex flex-wrap" >
 
-                    {server && server.map((item: IEpisodeServer, index: number) => {
+                    {animeInfo && animeInfo?.genres.map((item: string, index: number) => {
                         return (
 
-                            <ul key={index}>
-                                <li data-value={item.url} onClick={() => { switchServer(item.url); }} className=" cursor-pointer">
-                                    <span className={`${currentServer === item.url ? 'bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-pink-900 dark:text-pink-300' : 'bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300'}`}>{item.name}</span>
-                                </li>
-                            </ul>
+
+                            <li key={index}>
+                                <span className='bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300'>{item}</span>
+                            </li>
 
                         )
                     })
                     }
-                </div>
+
+                </ul>
+            </div>
+
+            <div className="block">
+                <h1 className="mt-5">Servers</h1>
+                <ul className="flex flex-wrap" >
+
+                    {server && server.map((item: IEpisodeServer, index: number) => {
+                        return (
+                            <li key={index} data-value={item.url} onClick={() => { switchServer(item.url); }} className=" cursor-pointer">
+                                <span className={`${currentServer === item.url ? 'bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-pink-900 dark:text-pink-300' : 'bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300'}`}>{item.name}</span>
+                            </li>
+                        )
+                    })
+                    }
+                </ul>
             </div>
             <div className="flex flex-wrap">
                 <h1 className="w-full">Episodes</h1>
@@ -100,11 +117,12 @@ const AnimeInfo = (data: { id: string, episode: string }) => {
                         />
                     )}
                 </div>
+
             </div>
             {/* <video id="my-player" controls ref={videoRef} className="w-full max-w-xl mx-auto mt-20" /> */}
-            
 
-        </div>
+
+        </div >
     )
 
 
