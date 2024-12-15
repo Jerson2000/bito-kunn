@@ -1,26 +1,45 @@
 'use client'
 import { ANIME, IEpisodeServer } from "@consumet/extensions"
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
+import Hls from "hls.js"
+// import videojs from 'video.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const AnimeInfo = (data: { id: string, episode: string }) => {
     const gogoanime = new ANIME.Gogoanime();
     const [animeInfo, setAnimeInfo] = useState<any>(null);
     const [server, setServer] = useState<any>(null);
     const [currentServer, setCurrentServer] = useState<string | null>(null);
+    const [stream,setStream] = useState<any>(null);
+
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const hls = new Hls();
 
     useEffect(() => {
         gogoanime.fetchAnimeInfo(data.id).then((data) => {
             setAnimeInfo(data)
-            console.log(data);
         });
         gogoanime.fetchEpisodeServers(data.id + "-episode-" + data.episode).then((data) => {
             setServer(data);
             setCurrentServer(data[0].url)
         })
-    }, [setAnimeInfo,setServer,setCurrentServer])
+        gogoanime.fetchEpisodeSources("dandadan-episode-1").
+        then(data=>{
+            // setStream(data);
+            console.log(data);
+        })
+    
+        // if (Hls.isSupported()) {
+        //     hls.loadSource(data.);
+        //     if (videoRef.current) {
+        //         hls.attachMedia(videoRef.current)
+        //     }
+        // }
+    }, [setAnimeInfo, setServer, setCurrentServer])
 
     const switchServer = (link: string) => {
         setCurrentServer(link);
@@ -29,7 +48,6 @@ const AnimeInfo = (data: { id: string, episode: string }) => {
     const extractId = (epId: string) => {
         return epId.replace(/-episode-\d+$/, '');
     }
-
 
 
 
@@ -83,7 +101,8 @@ const AnimeInfo = (data: { id: string, episode: string }) => {
                     )}
                 </div>
             </div>
-
+            {/* <video id="my-player" controls ref={videoRef} className="w-full max-w-xl mx-auto mt-20" /> */}
+            
 
         </div>
     )
